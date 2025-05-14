@@ -6,7 +6,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { AccountingItems, DailyOperation, type NavItem } from '@/types';
 import { Navmain} from '@/components/nav-main';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, LucideBriefcase, LucideCalendar, LucideCalendarDays, LucideTicket, LucideUser, Settings, Wallet,  } from 'lucide-react';
+import { LayoutGrid, LucideAlbum, LucideBriefcase, LucideCalendar, LucideCalendarDays, LucideTicket, LucideUser, Settings, Wallet,  } from 'lucide-react';
 import AppLogo2 from './app-logo2';
 
 const Overview: NavItem[] = [
@@ -17,36 +17,36 @@ const Overview: NavItem[] = [
     },
 ];
 
-const DailyOp: DailyOperation[] = [
-    {
-        title: "Reservations",
-        href: "/reservations",
-        icon: LucideCalendarDays,
-      },
-      {
-        title: "Calendar",
-        href: "/calendar",
-        icon: LucideCalendar,
+// const DailyOp: DailyOperation[] = [
+//     {
+//         title: "Reservations",
+//         href: "/reservations",
+//         icon: LucideCalendarDays,
+//       },
+//       {
+//         title: "Calendar",
+//         href: "/calendar",
+//         icon: LucideCalendar,
 
-      },
-      {
-        title: "Ticket",
-        href: "/ticket",
-        icon: LucideTicket,
+//       },
+//       {
+//         title: "Ticket",
+//         href: "/ticket",
+//         icon: LucideTicket,
 
-      },
-      {
-        title: "User",
-        href: "/user",
-        icon: LucideUser,
+//       },
+//       {
+//         title: "User",
+//         href: "/user",
+//         icon: LucideUser,
 
-      },
-      {
-        title: "Log",
-        href: "/logs",
-        icon: LucideBriefcase,
-      },
-];
+//       },
+//       {
+//         title: "Log",
+//         href: "/logs",
+//         icon: LucideBriefcase,
+//       },
+// ];
 
 const Accounting: AccountingItems[] = [
     {
@@ -64,7 +64,65 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+    role?: string; // Add the role prop
+}
+
+export function AppSidebar({role}: AppSidebarProps) {
+
+    const baseDailyOp: DailyOperation[] = [
+        {
+            title: "Appointments",
+            href: "/appointment",
+            icon: LucideAlbum,
+        },
+
+        {
+            title: "Calendar",
+            href: "/customer/calendar",
+            icon: LucideCalendar,
+        },
+        {
+            title: "Ticket",
+            href: "/customer/ticket",
+            icon: LucideTicket,
+        }   
+    ];
+
+    // Admin-only items
+    const adminOnlyItems: DailyOperation[] = [
+        {
+            title: "User",
+            href: "/user",
+            icon: LucideUser,
+        },
+        {
+            title: "Log",
+            href: "/logs",
+            icon: LucideBriefcase,
+        },
+        {
+            title: "Reservations",
+            href: "/reservations",
+            icon: LucideCalendarDays,
+        },
+        {
+            title: "Calendar",
+            href: "/calendar",
+            icon: LucideCalendar,
+        },
+        {
+            title: "Ticket",
+            href: "/ticket",
+            icon: LucideTicket,
+        },
+        
+    ];
+    // Merge base with admin-only if role is admin
+    const DailyOp = role === 'admin'
+        ? [...adminOnlyItems,]
+        : baseDailyOp;
+    
     return (
         <Sidebar collapsible="icon" variant="sidebar">
             <SidebarHeader className=" border-b  bg-white">
@@ -83,7 +141,7 @@ export function AppSidebar() {
             <SidebarContent className='bg-white'>
                 <NavHead items={Overview} />
                 <Navmain items={DailyOp} />
-                <NavAccount items={Accounting} />
+                {role === 'admin' && <NavAccount items={Accounting} />}
             </SidebarContent>
             <SidebarFooter className='bg-white'>
                 <NavFooter items={footerNavItems} className="mt-auto" />

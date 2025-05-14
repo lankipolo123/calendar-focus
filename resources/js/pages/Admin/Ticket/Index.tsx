@@ -6,8 +6,19 @@ import TicketDetailsModal, { TicketItem } from '@/components/TicketDetailsModal'
 import TicketRows from './TicketRow';
 import { STATUSES, HEADERS } from '@/Constant/ticketConstants';
 import { getStatusClass } from '@/Utils/ticketUtils';
+import { BreadcrumbItem, SharedData } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Tickets',
+    href: '/customer/ticket',
+  },
+];
 
 export default function TicketsPage() {
+  const { auth } = usePage<SharedData>().props;
+  const role = auth.user.role as string;
+
   const { props } = usePage<{ tickets: TicketItem[], flash?: { success?: string } }>();
   const tickets = props.tickets || [];
 
@@ -41,7 +52,7 @@ export default function TicketsPage() {
     }
   }, [props.flash]);
   return (
-    <AppLayout>
+    <AppLayout breadcrumbs={breadcrumbs} role={role} >
       <Head title="Tickets" />
       <div className="p-4">
         <div className="bg-white p-2 rounded-2xl shadow w-full">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, SharedData } from '@/types';
 import type { ReservationItem } from '@/Constant/reservationConstants';
 import ReservationTable from './ReservationRow';
 import { statuses } from '@/Constant/reservationConstants';
@@ -12,6 +12,10 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Reservations', href: '/reservat
 const itemsPerPage = 8;
 
 export default function ReservationsPage() {
+
+  const { auth } = usePage<SharedData>().props;
+    const role = auth.user.role as string;
+
   const { props } = usePage<{ reservations: ReservationItem[] }>();
   const reservations = props.reservations || [];
 
@@ -28,7 +32,7 @@ export default function ReservationsPage() {
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <AppLayout breadcrumbs={breadcrumbs} role={role}>
       <Head title="Reservations" />
       <div className="p-4 bg-white rounded-2xl shadow w-full">
      
