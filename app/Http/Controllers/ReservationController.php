@@ -67,4 +67,8 @@ class ReservationController extends Controller
     {
         //
     }
+
+    // For Admin: show all bookings
+
+
 }

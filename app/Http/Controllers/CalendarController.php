@@ -2,65 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Calendar;
-use App\Http\Requests\StoreCalendarRequest;
-use App\Http\Requests\UpdateCalendarRequest;
+use App\Models\Reservation;
+use Inertia\Inertia;
 
 class CalendarController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display all reservations to admin.
      */
-    public function index()
-    {
-        return inertia('Admin/Calendar/Index');
-    }
+   public function index()
+{
+    $reservations = Reservation::with('user')->get();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    $events = $reservations
+        ->groupBy('start_date')
+        ->map(function ($bookings, $date) {
+            return [
+                'title' => '', // fallback only
+                'start' => $date,
+                'extendedProps' => [
+                    'users' => $bookings->pluck('user.name')->toArray(), // e.g., ['Grace', 'Mike', 'Leo']
+                ],
+            ];
+        })
+        ->values(); // reset array keys
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCalendarRequest $request)
-    {
-        //
-    }
+    return Inertia::render('Admin/Calendar/Index', [
+        'events' => $events,
+    ]);
+}
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Calendar $calendar)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Calendar $calendar)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCalendarRequest $request, Calendar $calendar)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Calendar $calendar)
-    {
-        //
-    }
+    // Other scaffolded methods (create, store, etc.) are left untouched for now
 }

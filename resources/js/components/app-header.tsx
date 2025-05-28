@@ -13,6 +13,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {  LayoutGrid,  Menu, Search, } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import AppLogo2 from './app-logo2';
 
 const mainNavItems: NavItem[] = [
     {
@@ -70,7 +71,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
 
                     <Link href="/dashboard" prefetch className="flex items-center space-x-2">
-                        <AppLogo />
+                        <AppLogo2 />
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -99,7 +100,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </NavigationMenu>
                     </div>
 
-                    <div className="ml-auto flex items-center space-x-2">
+                    <div className="ml-auto flex items-center space-x-2 " >
                         <div className="relative flex items-center space-x-1">
                             <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
@@ -112,7 +113,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="size-10 rounded-full p-1">
                                     <Avatar className="size-8 overflow-hidden rounded-full">
-                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                        <AvatarImage src={(auth.user as any).avatar ?? ''} alt={auth.user.name} />
                                         <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
                                             {getInitials(auth.user.name)}
                                         </AvatarFallback>
@@ -120,18 +121,24 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end">
-                                <UserMenuContent user={auth.user} />
+                                <UserMenuContent user={{
+                                    ...auth.user,
+                                    email_verified_at: (auth.user as any).email_verified_at ?? '',
+                                    created_at: (auth.user as any).created_at ?? '',
+                                    updated_at: (auth.user as any).updated_at ?? '',
+                                }} />
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                 </div>
             </div>
             {breadcrumbs.length > 1 && (
-                <div className="border-sidebar-border/70 flex w-full border-b">
-                    <div className="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
-                        <Breadcrumbs breadcrumbs={breadcrumbs} />
-                    </div>
-                </div>
+           
+               <div className="mx-auto h-12 w-full px-4 text-neutral-500 md:max-w-7xl overflow-hidden">
+  <div className="w-full overflow-x-auto whitespace-nowrap scrollbar-none">
+  <Breadcrumbs breadcrumbs={breadcrumbs} />
+</div>
+</div>
             )}
         </>
     );

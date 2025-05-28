@@ -58,4 +58,9 @@ class User extends Authenticatable
     public function logs(){
         return $this->hasMany(Log::class,'user_id');
     }
+    
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');
+    }
 }

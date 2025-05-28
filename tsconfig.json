@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "jsx": "react-jsx",
         /* Visit https://aka.ms/tsconfig to read more about this file */
 
         /* Projects */
@@ -111,8 +112,7 @@
         "paths": {
             "@/*": ["./resources/js/*"],
             "ziggy-js": ["./vendor/tightenco/ziggy"]
-        },
-        "jsx": "react-jsx"
+        }
     },
     "include": [
         "resources/js/**/*.ts",

@@ -13,19 +13,20 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
     <ol
       data-slot="breadcrumb-list"
       className={cn(
-        "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
+        "flex flex-nowrap items-center gap-1.5 overflow-hidden scrollbar-none text-muted-foreground sm:gap-2.5",
         className
       )}
       {...props}
     />
-  )
+  );
 }
+
 
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-item"
-      className={cn("inline-flex items-center gap-1.2", className)}
+      className={cn("inline-flex items-center gap-1.2 overflow-hidden", className)}
       {...props}
     />
   )
@@ -43,7 +44,9 @@ function BreadcrumbLink({
   return (
     <Comp
       data-slot="breadcrumb-link"
-      className={cn("hover:text-foreground transition-colors", className)}
+      className={cn(" overflow-hidden hover:text-foreground transition-colors !text-[18px] !leading-tight", className)}
+
+
       {...props}
     />
   )
@@ -56,7 +59,12 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("text-foreground font-normal", className)}
+    className={cn(
+        " text-foreground font-normal !text-[18px] !leading-tight truncate whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]",
+        className
+      )}
+
+
       {...props}
     />
   )
@@ -72,7 +80,7 @@ function BreadcrumbSeparator({
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5", className)}
+      className={cn(" overflow-hidden [&>svg]:size-3.5", className)}
       {...props}
     >
       {children ?? <ChevronRight />}
@@ -89,7 +97,7 @@ function BreadcrumbEllipsis({
       data-slot="breadcrumb-ellipsis"
       role="presentation"
       aria-hidden="true"
-      className={cn("flex size-9 items-center justify-center", className)}
+      className={cn(" overflow-hidden flex size-9 items-center justify-center", className)}
       {...props}
     >
       <MoreHorizontal className="size-4" />

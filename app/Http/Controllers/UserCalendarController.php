@@ -3,62 +3,59 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Reservation;
 
 class UserCalendarController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-         return inertia('Customer/Calendar/Index');
-    }
+  public function index()
+{
+    $user = auth()->user();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    $reservations = Reservation::where('user_id', $user->id)->get();
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    $events = $reservations->map(function ($r) {
+        return [
+            'title' => "My Booking – {$r->location}",
+            'start' => $r->start_date,
+            'end' => $r->end_date,
+        ];
+    });
+
+    return \Inertia\Inertia::render('Customer/Calendar/Index', [
+        'events' => $events,
+    ]);
+}
+
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'date' => 'required|date|after_or_equal:today', 
+            'location' => 'required|string|max:255',
+        ]);
+
+        $user = auth()->user();
+
+        $already = Reservation::where('user_id', $user->id)
+            ->whereDate('start_date', $request->date)
+            ->first();
+
+        if ($already) {
+            return back()->withErrors(['date' => 'You already have a booking on this date.']);
+        }
+
+       $user->reservations()->create([
+            'name' => $user->name,
+            'email' => $user->email,
+            'contact_number' => $user->contact_number ?? '',
+            'start_date' => $request->date,
+            'end_date' => $request->date,
+            'location' => $request->location,
+            'status' => 'confirmed',
+            'category' => 'Seat',
+        ]);
+
+        return redirect()->route('customer.calendar.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    // You can keep other methods (create, show, edit, etc.) if needed
 }

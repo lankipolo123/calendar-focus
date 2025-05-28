@@ -95,7 +95,7 @@ export function LoginForm({
           <Label htmlFor="remember">Remember me</Label>
         </div>
 
-        <Button type="submit" className="w-full bg-red-900" tabIndex={4} disabled={processing}>
+        <Button type="submit" className="w-2/4 bg-red-900" tabIndex={4} disabled={processing}>
           {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
           Login
         </Button>

@@ -69,7 +69,7 @@ class TicketController extends Controller
 }
 
 
-    /**
+    /**6
      * Remove the specified resource from storage.
      */
     public function destroy(Ticket $ticket)

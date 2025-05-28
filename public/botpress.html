@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Botpress Chatbot</title>
+</head>
+<body>
+
+        <!-- 
+
+                Use the Script from the GreatWork Chatbot and Configure it
+                1. Translator Agent
+                2. Add Website as Knowledge Base
+                3. Policy Agent (So that it Does not answer unnecessary Questions)
+                4. Choose the Best A.I (It's Good to be fast response but sometimes it gives a wrong response)
+                5. You can Instruct it
+
+        -->   <script>src="https://cdn.botpress.cloud/webchat/v2.4/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/22/00/20250422003409-Y24W1NG8.json" </script>
+              <script src="https://cdn.botpress.cloud/webchat/v2.4/inject.js"></script>
+              <script src="https://files.bpcontent.cloud/2025/04/22/00/20250422003409-DNSUBZS6.js"></script>
+    
+
+        
+        <!-- 
+          
+                If needed a different approach or changes Log In 
+                and Embed the Booking with the Cal.Com Account
+
+                  Cal.Com Account:
+                  Email: itintern.primecorp@gmail.com
+                  Name: GreatWork
+                  Password: 1haveagreatwork@Prime
+                
+                Goodluck!!
+
+          -->   <script type="text/javascript">
+                (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+                Cal("init", "booking", {origin:"https://cal.com"});
+
+                Cal.ns.booking("floatingButton", {"calLink":"greatwork/booking","config":{"layout":"month_view"},"buttonPosition":"bottom-left","buttonColor":"#bc001d","buttonText":"Book Now"}); 
+                Cal.ns.booking("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#bc0012"},"dark":{"cal-brand":"#fafafa"}},"hideEventTypeDetails":false,"layout":"month_view"});
+                </script>
+        
+</body>
+</html>

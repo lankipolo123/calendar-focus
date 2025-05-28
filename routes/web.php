@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-
 Route::get('/', function () {
     return redirect()->route('login');
 })->middleware('guest')->name('home');
 
+// Authenticated routes
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard Route
@@ -37,46 +37,39 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
     })->name('dashboard');
 
- Route::middleware('role:admin')->group(function () {
-        Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
-        Route::resource('reservations', ReservationController::class)->except('index');
+    // Admin routes (use frontend props to restrict access)
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::resource('reservations', ReservationController::class)->except('index');
 
-        Route::get('/ticket',[TicketController::class, 'index'])->name('ticket.index');
-        Route::resource('ticket', TicketController::class)->except('index');
-        
+    Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
+    Route::resource('ticket', TicketController::class)->except('index');
 
-        Route::get('/calendar',[CalendarController::class, 'index'])->name('calendar.index'); 
-        Route::resource('calendar', CalendarController::class)->except('index');
-        
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::resource('calendar', CalendarController::class)->except('index');
 
-        Route::get('/logs',[LogController::class, 'index'])->name('log.index');
-        Route::resource('logs', LogController::class)->except('index');
-        
+    Route::get('/logs', [LogController::class, 'index'])->name('log.index');
+    Route::resource('logs', LogController::class)->except('index');
 
-        Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index'); 
-        Route::resource('payment', PaymentController::class)->except('index'); 
-        
-        Route::get('/user', function(){
-            $role = Auth::user()->role;  
-            return Inertia::render('Admin/User/Index',['role' => $role]);
-        })->name('user.index');
-    });
+    Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
+    Route::resource('payment', PaymentController::class)->except('index');
 
+    Route::get('/user', function () {
+        $role = Auth::user()->role;
+        return Inertia::render('Admin/User/Index', ['role' => $role]);
+    })->name('user.index');
 
+    // Customer routes (use frontend props to restrict access)
+    Route::get('/appointment', [AppointmentController::class, 'index'])->name('appointment.index');
+    Route::resource('appointment', AppointmentController::class)->except('index');
 
-    Route::middleware('role:user')->group(function () {
-        Route::get('/appointment', [AppointmentController::class, 'index'])->name('appointment.index');
-        Route::resource('appointment', AppointmentController::class)->except('index');
-        
-        Route::get('/customer/calendar', [UserCalendarController::class, 'index'])->name('customer.calendar.index');
-        Route::resource('customer/calendar', UserCalendarController::class)->except('index');
+    // ✅ FIXED: added this route explicitly
+    Route::get('/customer/calendar', [UserCalendarController::class, 'index'])->name('customer.calendar.index');
+    Route::resource('customer/calendar', UserCalendarController::class)->except('index');
 
-        Route::get('/customer/ticket', [UserTicketController::class, 'index'])->name('customer.ticket.index');
-        Route::resource('customer/ticket', UserTicketController::class)->except('index');
-    
-    });
-    
+    Route::get('/customer/ticket', [UserTicketController::class, 'index'])->name('customer.ticket.index');
+    Route::resource('customer/ticket', UserTicketController::class)->except('index');
 });
+
 // Settings Pages
 Route::prefix('settings')->group(function () {
     Route::get('profile', fn () => Inertia::render('Settings/Profile'));

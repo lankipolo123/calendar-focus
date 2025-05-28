@@ -1,7 +1,12 @@
 import { Head } from '@inertiajs/react';
 import { LoginForm } from '@/components/login-form';
+import { useEffect } from 'react';
 
 export default function LoginPage() {
+  useEffect(() => {
+    document.documentElement.classList.remove('dark'); // disable dark mode on login
+  }, []);
+  
   return (
     <div className="relative grid min-h-screen grid-cols-1 lg:grid-cols-2">
       {/* Left Panel: Form */}
@@ -17,7 +22,7 @@ export default function LoginPage() {
           >
             <path
               d="M602.45,3.86h0S572.9,116.24,281.94,120H923C632,116.24,602.45,3.86,602.45,3.86Z"
-              className="fill-[#454545]"
+              className="fill-red-900"
             />
           </svg>
         </div>
@@ -41,7 +46,7 @@ export default function LoginPage() {
         <img
           src="images/Greatwork2Lobby.png"
           alt="Login"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.3] dark:grayscale"
+          className="absolute inset-0 h-full w-full object-cover "
         />
 
         {/* Bottom-right SVG for desktop */}
@@ -54,7 +59,7 @@ export default function LoginPage() {
           >
             <path
               d="M602.45,3.86h0S572.9,116.24,281.94,120H923C632,116.24,602.45,3.86,602.45,3.86Z"
-              className="fill-red-950"
+              className="fill-red-900"
             />
           </svg>
         </div>
