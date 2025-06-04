@@ -3,10 +3,12 @@ import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { EventInput } from '@fullcalendar/core';
 import { useRef, useState, useEffect } from 'react';
-import Calendar from '@/components/calendar';
-import CalendarHeader from '@/components/calendar-header';
-import { showBookingFailed, showBookingSuccess, showPastDateError } from '@/components/calendar-toast';
-import BookingDialog from '@/components/ui/calendar-booking-dialog';
+import MainCalendar from '@/components/calendar-components/main-calendar';
+import CalendarHeader from '@/components/calendar-components/main-calendar-header';
+import { showBookingFailed, showBookingSuccess, showPastDateError } from '@/components/calendar-components/main-calendar-toast';
+import BookingDialog from '@/components/calendar-components/calendar-booking-dialog';
+import { DateRange } from 'react-day-picker';
+import { format } from 'date-fns';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Calendar', href: '/customer/calendar' }];
 
@@ -20,17 +22,19 @@ export default function Index() {
 
   const calendarRef = useRef<any>(null);
   const [monthLabel, setMonthLabel] = useState('');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [pendingDateRange, setPendingDateRange] = useState<DateRange>({ from: new Date(), to: new Date() });
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     const calendarApi = calendarRef.current?.getApi();
     const currentDate = calendarApi?.getDate();
     if (currentDate) {
-      setMonthLabel(new Intl.DateTimeFormat('en-US', {
-        month: 'long',
-        year: 'numeric',
-      }).format(currentDate));
+      setMonthLabel(
+        new Intl.DateTimeFormat('en-US', {
+          month: 'long',
+          year: 'numeric',
+        }).format(currentDate)
+      );
     }
   }, []);
 
@@ -48,25 +52,36 @@ export default function Index() {
     const calendarApi = calendarRef.current?.getApi();
     const currentDate = calendarApi?.getDate();
     if (currentDate) {
-      setMonthLabel(new Intl.DateTimeFormat('en-US', {
-        month: 'long',
-        year: 'numeric',
-      }).format(currentDate));
+      setMonthLabel(
+        new Intl.DateTimeFormat('en-US', {
+          month: 'long',
+          year: 'numeric',
+        }).format(currentDate)
+      );
     }
   };
 
   const handleDateClick = (arg: { dateStr: string }) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     if (arg.dateStr < today) {
       showPastDateError();
       return;
     }
-    setSelectedDate(arg.dateStr);
+
+    const clicked = new Date(arg.dateStr);
+    setPendingDateRange({ from: clicked, to: clicked });
     setDialogOpen(true);
   };
 
-  const handleBookingConfirm = () => {
-    setData('date', selectedDate);
+  const handleBookingConfirm = (
+    location: string,
+    roomType: string,
+    range: DateRange,
+    days: number
+  ) => {
+    if (!range.from) return;
+    setData('date', format(range.from, "yyyy-MM-dd"));
+    setData('location', location);
     post('/customer/calendar', {
       onSuccess: () => {
         showBookingSuccess();
@@ -93,7 +108,7 @@ export default function Index() {
                 onSearchChange={() => {}}
               />
               <div className="flex-1 min-h-0 overflow-hidden">
-                <Calendar
+                <MainCalendar
                   events={events}
                   onDateClick={handleDateClick}
                   calendarRef={calendarRef}
@@ -101,8 +116,8 @@ export default function Index() {
                 <BookingDialog
                   open={dialogOpen}
                   onClose={() => setDialogOpen(false)}
-                  date={selectedDate}
                   onConfirm={handleBookingConfirm}
+                  initialRange={pendingDateRange}
                 />
               </div>
             </div>

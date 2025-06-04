@@ -4,58 +4,77 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reservation;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class UserCalendarController extends Controller
 {
-  public function index()
-{
-    $user = auth()->user();
+    public function index()
+    {
+        $user = Auth::user();
 
-    $reservations = Reservation::where('user_id', $user->id)->get();
+        // Show all bookings regardless of status (user can see who booked)
+        $allBookings = Reservation::where('location', 'Ben-lor Bldg')
+            ->orderBy('start_date')
+            ->get()
+            ->groupBy('start_date');
 
-    $events = $reservations->map(function ($r) {
-        return [
-            'title' => "My Booking – {$r->location}",
-            'start' => $r->start_date,
-            'end' => $r->end_date,
-        ];
-    });
+        $events = $allBookings->map(function ($group, $date) {
+            $users = $group->map(fn($r) => $r->name)->toArray();
+            $status = $group->count() >= 5 ? 'full' : 'available'; // Assuming 5 = full capacity
 
-    return \Inertia\Inertia::render('Customer/Calendar/Index', [
-        'events' => $events,
-    ]);
-}
+            return [
+                'title' => "Bookings",
+                'start' => $date,
+                'end' => $date,
+                'color' => $status === 'full' ? '#ef4444' : '#22c55e', // red or green
+                'extendedProps' => [
+                    'users' => $users,
+                ],
+            ];
+        })->values();
+
+        return Inertia::render('Customer/Calendar/Index', [
+            'events' => $events,
+        ]);
+    }
 
     public function store(Request $request)
     {
         $request->validate([
-            'date' => 'required|date|after_or_equal:today', 
+            'date' => 'required|date|after_or_equal:today',
             'location' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
 
-        $already = Reservation::where('user_id', $user->id)
-            ->whereDate('start_date', $request->date)
-            ->first();
+        // Check if user already has an unexpired booking for same category
+        $hasActive = Reservation::where('user_id', $user->id)
+            ->where('category', $request->category)
+            ->whereDate('end_date', '>=', now()->toDateString())
+            ->exists();
 
-        if ($already) {
-            return back()->withErrors(['date' => 'You already have a booking on this date.']);
+        if ($hasActive) {
+            return back()->withErrors([
+                'date' => "You already have an active booking for this category.",
+            ]);
         }
 
-       $user->reservations()->create([
+        Reservation::create([
+            'user_id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'contact_number' => $user->contact_number ?? '',
             'start_date' => $request->date,
             'end_date' => $request->date,
             'location' => $request->location,
-            'status' => 'confirmed',
-            'category' => 'Seat',
+            'status' => 'active',
+            'category' => $request->category,
+            'type' => $request->type,
         ]);
 
         return redirect()->route('customer.calendar.index');
     }
-
-    // You can keep other methods (create, show, edit, etc.) if needed
 }

@@ -10,7 +10,7 @@ interface CalendarProps {
   calendarRef?: RefObject<any>;
 }
 
-export default function Calendar({ events, onDateClick, calendarRef }: CalendarProps) {
+export default function MainCalendar({ events, onDateClick, calendarRef }: CalendarProps) {
   const internalRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fullCalendarRef = calendarRef || internalRef;

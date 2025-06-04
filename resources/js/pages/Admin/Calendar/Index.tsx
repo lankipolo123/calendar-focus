@@ -3,9 +3,9 @@ import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { EventInput } from '@fullcalendar/core';
 import { useState, useRef, useEffect } from 'react';
-import Calendar from '@/components/calendar';
-import CalendarHeader from '@/components/calendar-header';
-import AdminCalendarSidebar from '@/components/admin-calendar-sidebar';
+import FullCalendar from '@/components/calendar-components/main-calendar'
+import CalendarHeader from '@/components/calendar-components/main-calendar-header';
+import AdminCalendarSidebar from '@/components/calendar-components/admin-calendar-sidebar';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Calendar', href: '/calendar' }];
 
@@ -72,7 +72,7 @@ export default function Index() {
                 onSearchChange={setSearch}
               />
               <div className="flex-1 min-h-0 overflow-hidden">
-                <Calendar
+                <FullCalendar
                   events={events}
                   onDateClick={handleDateClick}
                   calendarRef={calendarRef}

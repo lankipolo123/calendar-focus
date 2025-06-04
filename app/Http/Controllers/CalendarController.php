@@ -7,31 +7,26 @@ use Inertia\Inertia;
 
 class CalendarController extends Controller
 {
-    /**
-     * Display all reservations to admin.
-     */
-   public function index()
-{
-    $reservations = Reservation::with('user')->get();
+    public function index()
+    {
+        $reservations = Reservation::with('user')->get(); // ✅ include all (expired + active)
 
-    $events = $reservations
-        ->groupBy('start_date')
-        ->map(function ($bookings, $date) {
+        $events = $reservations->map(function ($r) {
             return [
-                'title' => '', // fallback only
-                'start' => $date,
+                'title' => "{$r->name} – {$r->location}",
+                'start' => $r->start_date,
+                'end' => $r->end_date,
                 'extendedProps' => [
-                    'users' => $bookings->pluck('user.name')->toArray(), // e.g., ['Grace', 'Mike', 'Leo']
+                    'email' => $r->email,
+                    'contact' => $r->contact_number,
+                    'delegation' => $r->delegation ?? '1',
+                    'status' => $r->status, // ✅ admin can see if it's expired
                 ],
             ];
-        })
-        ->values(); // reset array keys
+        });
 
-    return Inertia::render('Admin/Calendar/Index', [
-        'events' => $events,
-    ]);
-}
-
-
-    // Other scaffolded methods (create, store, etc.) are left untouched for now
+        return Inertia::render('Admin/Calendar/Index', [
+            'events' => $events,
+        ]);
+    }
 }

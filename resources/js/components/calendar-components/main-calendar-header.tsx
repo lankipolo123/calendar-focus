@@ -10,7 +10,7 @@ interface Props {
   onSearchChange: (value: string) => void;
 }
 
-export default function CalendarHeader({
+export default function FullCalendarHeader({
   onPrev,
   onNext,
   currentMonth,

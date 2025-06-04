@@ -7,22 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reservation extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReservationFactory> */
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name',
         'email',
         'contact_number',
         'start_date',
         'end_date',
         'location',
-        'status',
+        'status', // 'active', 'expired'
         'category',
+        'type',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->end_date < now()->toDateString();
     }
 }
